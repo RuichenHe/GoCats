@@ -76,6 +76,22 @@ func main() {
 		return c.Status(201).JSON(createdCat)
 	})
 
+	//Second op: get all cats
+	app.Get("/cats", func(c *fiber.Ctx) error {
+		query := bson.D{{}}
+
+		cursor, err := mg.Db.Collection("cats").Find(c.Context(), query)
+		if err != nil {
+			return c.Status(500).SendString(err.Error())
+		}
+		//Create a cats slice, and use All func to populate cats with all of the query results
+		var cats []models.Cat = make([]models.Cat, 0)
+		if err := cursor.All(c.Context(), &cats); err != nil {
+			return c.Status(500).SendString(err.Error())
+		}
+		return c.JSON(cats)
+	})
+
 	//Listen at localhost:3000
 	log.Fatal(app.Listen(":3000"))
 }
