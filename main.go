@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"log"
 	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"
@@ -39,4 +40,10 @@ func Connect() error {
 		Db:     db,
 	}
 	return nil
+}
+
+func main() {
+	if err := Connect(); err != nil {
+		log.Fatal(err)
+	}
 }
