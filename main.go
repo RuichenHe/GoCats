@@ -138,6 +138,19 @@ func main() {
 		}
 		return c.Status(200).JSON(cat)
 	})
+	//Fifth op: delete a cat info by name
+	app.Delete("/cat/:name", func(c *fiber.Ctx) error {
+		catName := c.Params("name")
+		query := bson.M{"name": catName}
+		result, err := mg.Db.Collection("cats").DeleteOne(c.Context(), query)
+		if err != nil {
+			return c.SendStatus(500)
+		}
+		if result.DeletedCount < 1 {
+			return c.SendStatus(404)
+		}
+		return c.Status(200).JSON(catName + " record deleted")
+	})
 	//Listen at localhost:3000
 	log.Fatal(app.Listen(":3000"))
 }
