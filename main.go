@@ -8,7 +8,6 @@ import (
 	"github.com/RuichenHe/GoCats/models"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -103,20 +102,16 @@ func main() {
 		}
 		return c.Status(200).JSON(cat)
 	})
-	//Fourth op: update a cat info based on id
-	app.Put("/cat/:id", func(c *fiber.Ctx) error {
-		inputId := c.Params("id")
-		catId, err := primitive.ObjectIDFromHex(inputId)
-		if err != nil {
-			return c.SendStatus(400)
-		}
-		query := bson.M{"_id": catId}
+	//Fourth op: update a cat info based on name
+	app.Put("/cat/:name", func(c *fiber.Ctx) error {
+		catName := c.Params("name")
+		query := bson.M{"name": catName}
 		cat := new(models.Cat)
 		if err := c.BodyParser(cat); err != nil {
 			return c.Status(400).SendString(err.Error())
 		}
 		originalCat := new(models.Cat)
-		err = mg.Db.Collection("cats").FindOne(c.Context(), query).Decode(&originalCat)
+		err := mg.Db.Collection("cats").FindOne(c.Context(), query).Decode(&originalCat)
 		if err != nil {
 			return c.Status(400).SendString(err.Error())
 		}
@@ -141,7 +136,6 @@ func main() {
 			}
 			return c.SendStatus(500)
 		}
-		cat.ID = inputId
 		return c.Status(200).JSON(cat)
 	})
 	//Listen at localhost:3000
