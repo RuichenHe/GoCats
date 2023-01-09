@@ -109,7 +109,7 @@ func main() {
 		if err != nil {
 			return c.Status(400).SendString(err.Error())
 		}
-		models.CheckField(originalCat, cat)
+		cat.CheckField(originalCat)
 		newInfo := bson.D{
 			{
 				Key: "$set",

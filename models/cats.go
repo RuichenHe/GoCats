@@ -10,7 +10,7 @@ type Cat struct {
 	Weight string `json:"weight"`
 }
 
-func CheckField(orgCatInfo, newCatInfo *Cat) {
+func (newCatInfo *Cat) CheckField(orgCatInfo *Cat) {
 	//Check if the field is provided or not, if not, filled with original value in the database
 	if (*newCatInfo).Name == "" {
 		(*newCatInfo).Name = (*orgCatInfo).Name
