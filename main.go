@@ -92,7 +92,18 @@ func main() {
 		}
 		return c.JSON(cats)
 	})
-	//Third op: update a cat info based on id
+	//Third op: get one cat based on cat name
+	app.Get("/cat/:name", func(c *fiber.Ctx) error {
+		catName := c.Params("name")
+		query := bson.M{"name": catName}
+		cat := new(models.Cat)
+		err := mg.Db.Collection("cats").FindOne(c.Context(), query).Decode(&cat)
+		if err != nil {
+			return c.Status(400).SendString(err.Error())
+		}
+		return c.Status(200).JSON(cat)
+	})
+	//Fourth op: update a cat info based on id
 	app.Put("/cat/:id", func(c *fiber.Ctx) error {
 		inputId := c.Params("id")
 		catId, err := primitive.ObjectIDFromHex(inputId)
