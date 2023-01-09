@@ -8,6 +8,7 @@ import (
 	"github.com/RuichenHe/GoCats/models"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -91,7 +92,47 @@ func main() {
 		}
 		return c.JSON(cats)
 	})
-
+	//Third op: update a cat info based on id
+	app.Put("/cat/:id", func(c *fiber.Ctx) error {
+		inputId := c.Params("id")
+		catId, err := primitive.ObjectIDFromHex(inputId)
+		if err != nil {
+			return c.SendStatus(400)
+		}
+		query := bson.M{"_id": catId}
+		cat := new(models.Cat)
+		if err := c.BodyParser(cat); err != nil {
+			return c.Status(400).SendString(err.Error())
+		}
+		originalCat := new(models.Cat)
+		err = mg.Db.Collection("cats").FindOne(c.Context(), query).Decode(&originalCat)
+		if err != nil {
+			return c.Status(400).SendString(err.Error())
+		}
+		models.CheckField(originalCat, cat)
+		newInfo := bson.D{
+			{
+				Key: "$set",
+				Value: bson.D{
+					{Key: "name", Value: cat.Name},
+					{Key: "brand", Value: cat.Brand},
+					{Key: "age", Value: cat.Age},
+					{Key: "gender", Value: cat.Gender},
+					{Key: "color", Value: cat.Color},
+					{Key: "weight", Value: cat.Weight},
+				},
+			},
+		}
+		err = mg.Db.Collection("cats").FindOneAndUpdate(c.Context(), query, newInfo).Err()
+		if err != nil {
+			if err == mongo.ErrNoDocuments {
+				return c.SendStatus(400)
+			}
+			return c.SendStatus(500)
+		}
+		cat.ID = inputId
+		return c.Status(200).JSON(cat)
+	})
 	//Listen at localhost:3000
 	log.Fatal(app.Listen(":3000"))
 }

@@ -9,3 +9,25 @@ type Cat struct {
 	Color  string `json:"color"`
 	Weight string `json:"weight"`
 }
+
+func CheckField(orgCatInfo, newCatInfo *Cat) {
+	//Check if the field is provided or not, if not, filled with original value in the database
+	if (*newCatInfo).Name == "" {
+		(*newCatInfo).Name = (*orgCatInfo).Name
+	}
+	if (*newCatInfo).Brand == "" {
+		(*newCatInfo).Brand = (*orgCatInfo).Brand
+	}
+	if (*newCatInfo).Age == 0 {
+		(*newCatInfo).Age = (*orgCatInfo).Age
+	}
+	if (*newCatInfo).Gender == "" {
+		(*newCatInfo).Gender = (*orgCatInfo).Gender
+	}
+	if (*newCatInfo).Color == "" {
+		(*newCatInfo).Color = (*orgCatInfo).Color
+	}
+	if (*newCatInfo).Weight == "" {
+		(*newCatInfo).Weight = (*orgCatInfo).Weight
+	}
+}
