@@ -12,7 +12,7 @@ Inside the GoCats folder, run:
 
 # Software Description
 Based on the flow chart, there are five operations (cover all C.R.U.D) provided in the software, including **adding a cat**, **get all cats infomation**, **get a cat infomation by cat name**, **update a cat infomation by cat name**, and **delete a cat infomation by cat name**. 
-
+![Flow Chart](doc/GoCats_FlowChart.png)
 A cat infomation contains following items:
 `ID(string), Name(string), Brand(string), Age(int), Gender(string), Color(string), and Weight(string)`
 ## Add a cat
